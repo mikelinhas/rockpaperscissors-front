@@ -1,0 +1,7 @@
+.box-button:active {
+    background-color: #4e9396;
+}
+
+.box-button.selected {
+    background-color: #418487;
+}
