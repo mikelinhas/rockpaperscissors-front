@@ -10,7 +10,11 @@ export class CounterComponent {
   label!: string;
 
   @Input()
-  count!: number;
+  count!: number | null;
 
-  constructor() {}
+  constructor() {
+    if (!this.count) {
+      this.count = 0;
+    }
+  }
 }

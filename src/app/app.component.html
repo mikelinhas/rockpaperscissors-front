@@ -1,38 +1,38 @@
 <div class="mx-auto max-w-md">
     <div class="center">
-        <h3 class="mt-12 font-light text-slate-50"> Playing as {{player}} </h3>
+        <h3 class="mt-12 mb-4 font-light text-slate-50"> Playing as {{player$ | async}} </h3>
     </div>
-    <div class="center">
-        <h3 class="m-4 text-3xl font-medium text-cyan-300"> YOU LOSE! </h3>
+    <div class="center" style="height: 36px">
+        <app-banner [hidden]="(gamePhase$ | async) !=='FINISHED'" [outcome]="(outcome$ | async)"></app-banner>
     </div>
-    <div class="center mt-9 mb-12">
-        <div class="flex w-full justify-center">
-            <app-icon [name]="'scissors'" class="m-3 mx-5 h-20"></app-icon>
-            <app-icon [name]="'paper'" class="m-3 mx-5 h-20"></app-icon>
+    <div class="center mt-9 mb-12" style="height: 104px">
+        <div class="flex w-full justify-center" *ngIf="(gamePhase$ | async) === 'FINISHED'">
+            <app-icon [name]="(playerSelection$ | async)" class="m-3 mx-5 h-20"></app-icon>
+            <app-icon [name]="(computerSelection$ | async)" class="m-3 mx-5 h-20"></app-icon>
+        </div>
+        <div class="flex w-full justify-center" *ngIf="(gamePhase$ | async) === 'WAITING_FOR_COUNTDOWN'">
+            <app-countdown (finished)="onCountdownFinished()"></app-countdown>
         </div>
     </div>
     <div class="center m-8">
         <div class="flex">
-            <app-box [name]="'rock'" [isSelected]="playerSymbol === 'rock'"
+            <app-box [name]="'ROCK'" [isSelected]="(playerSelection$ | async) === 'ROCK'"
                 (selected)="updateSelection($event)"></app-box>
-            <app-box [name]="'paper'" [isSelected]="playerSymbol === 'paper'"
+            <app-box [name]="'PAPER'" [isSelected]="(playerSelection$ | async) === 'PAPER'"
                 (selected)="updateSelection($event)"></app-box>
-            <app-box [name]="'scissors'" [isSelected]="playerSymbol === 'scissors'"
+            <app-box [name]="'SCISSORS'" [isSelected]="(playerSelection$ | async) === 'SCISSORS'"
                 (selected)="updateSelection($event)"></app-box>
         </div>
     </div>
     <div class="center">
-        <div class="flex w-full justify-evenly">
-            <app-counter [label]="'WON'" [count]="scores.won"></app-counter>
-            <app-counter [label]="'TIED'" [count]="scores.tied"></app-counter>
-            <app-counter [label]="'LOST'" [count]="scores.lost"></app-counter>
-        </div>
+        <app-scores class="w-full" [scores]="(scores$ | async)"></app-scores>
     </div>
     <div class="center">
-        <button class="mt-10 h-16" (click)="refreshScores()">
+        <button class="mt-10 h-16" (click)="restartGame()">
             <app-icon [name]="'refresh'"></app-icon>
         </button>
     </div>
+
 </div>
 
 <router-outlet></router-outlet>

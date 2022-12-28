@@ -6,8 +6,9 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { select, Store } from '@ngrx/store';
-import { Observable, Observer } from 'rxjs';
-import { GameState } from '../models/game';
+import { Observable } from 'rxjs';
+import { GamePhase } from '../models/game';
+import { GameState } from '../state/game.reducer';
 
 @Component({
   selector: 'app-box',
@@ -15,7 +16,7 @@ import { GameState } from '../models/game';
   styleUrls: ['./box.component.css'],
 })
 export class BoxComponent {
-  gameState$: Observable<GameState>;
+  gamePhase$: Observable<GamePhase>;
 
   @Input()
   isSelected!: boolean;
@@ -25,9 +26,8 @@ export class BoxComponent {
 
   @Output() selected = new EventEmitter<string>();
 
-  constructor(private store: Store<{ gameState: GameState }>) {
-    this.gameState$ = store.pipe(select('gameState'));
-    this.gameState$.subscribe(something => console.log(something));
+  constructor(private store: Store<GameState>) {
+    this.gamePhase$ = store.pipe(select('gamePhase'));
   }
 
   onSelected() {

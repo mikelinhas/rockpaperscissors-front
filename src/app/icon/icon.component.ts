@@ -7,11 +7,13 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class IconComponent implements OnInit {
   @Input()
-  name!: string;
+  name!: string | null;
 
-  path!: string;
+  path: string | null = null;
 
   ngOnInit(): void {
-    this.path = `./assets/${this.name}.png`;
+    if (this.name) {
+      this.path = `./assets/${this.name.toLowerCase()}.png`;
+    }
   }
 }

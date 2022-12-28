@@ -1,3 +1,9 @@
+export enum Outcome {
+  WON = 'WON',
+  TIED = 'TIED',
+  LOST = 'LOST',
+  NONE = 'NONE',
+}
 export interface Scores {
   won: number;
   lost: number;

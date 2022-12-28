@@ -1,5 +1,12 @@
-export enum GameState {
+export enum GamePhase {
   SELECTING_SYMBOL = 'SELECTING_SYMBOL',
   WAITING_FOR_COUNTDOWN = 'WAITING_FOR_COUNTDOWN',
   FINISHED = 'FINISHED',
+}
+
+export enum Symbol {
+  ROCK = 'ROCK',
+  PAPER = 'PAPER',
+  SCISSORS = 'SCISSORS',
+  NONE = 'NONE',
 }

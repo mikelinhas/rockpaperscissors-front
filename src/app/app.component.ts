@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { GameState } from './models/game';
-import { Scores } from './models/scores';
-import { ScoresService } from './services/scores.service';
-import { StartPlaying } from './state/game.actions';
+import { GamePhase, Symbol } from './models/game';
+import { Outcome, Scores } from './models/scores';
+import { GameState } from './state/game.reducer';
+import * as GameActions from './state/game.actions';
 
 @Component({
   selector: 'app-root',
@@ -12,42 +12,41 @@ import { StartPlaying } from './state/game.actions';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit {
-  title = 'Rock Paper Scissors';
-  player = 'Mike';
-  scores: Scores = { won: 0, lost: 0, tied: 0 };
-  playerSymbol = '';
+  player$: Observable<string>;
+  playerSelection$: Observable<Symbol>;
+  computerSelection$: Observable<Symbol>;
+  gamePhase$: Observable<GamePhase>;
+  outcome$: Observable<Outcome>;
+  scores$: Observable<Scores>;
 
-  gameState$: Observable<GameState>;
-
-  constructor(
-    private scoresService: ScoresService,
-    private store: Store<{ gameState: GameState }>
-  ) {
-    this.gameState$ = store.pipe(select('gameState'));
-    this.gameState$.subscribe(something => console.log(something));
+  constructor(private store: Store<{ gameState: GameState }>) {
+    const gameState$ = store.pipe(select('gameState'));
+    this.player$ = gameState$.pipe(select('playerName'));
+    this.gamePhase$ = gameState$.pipe(select('gamePhase'));
+    this.outcome$ = gameState$.pipe(select('outcome'));
+    this.playerSelection$ = gameState$.pipe(select('playerSelection'));
+    this.computerSelection$ = gameState$.pipe(select('computerSelection'));
+    this.scores$ = gameState$.pipe(select('scores'));
   }
 
   ngOnInit() {
     this.getScores();
   }
 
-  updateSelection(selection: string): void {
-    this.playerSymbol = selection;
+  onCountdownFinished() {
+    this.store.dispatch(GameActions.showResult());
+  }
+
+  updateSelection(selection: string) {
+    const symbol = selection as Symbol;
+    this.store.dispatch(GameActions.selectSymbol({ symbol }));
   }
 
   getScores(): void {
-    this.scoresService.getScores().subscribe(
-      data =>
-        (this.scores = {
-          won: data.gamesWon,
-          tied: data.gamesTied,
-          lost: data.gamesLost,
-        })
-    );
+    this.store.dispatch(GameActions.loadScores());
   }
 
-  refreshScores(): void {
-    this.store.dispatch(new StartPlaying());
-    this.scores.won = this.scores.won + 1;
+  restartGame(): void {
+    this.store.dispatch(GameActions.restartGame());
   }
 }
